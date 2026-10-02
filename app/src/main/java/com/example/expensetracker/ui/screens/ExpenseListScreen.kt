@@ -77,7 +77,8 @@ fun ExpenseListScreen(
             SummaryBar(count = expenses.size, total = total)
 
             LazyColumn(
-                contentPadding      = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                //fix: add bottom padding to LazyColumn so last item clears FAB
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 80.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(expenses, key = { it.id }) { expense ->
