@@ -8,14 +8,11 @@ import androidx.compose.runtime.*
 import com.example.expensetracker.ui.screens.AddExpenseScreen
 import com.example.expensetracker.ui.screens.ExpenseListScreen
 import com.example.expensetracker.ui.theme.ExpenseTrackerTheme
+import com.example.expensetracker.model.Expense // Add this line
+import com.example.expensetracker.model.sampleExpenses // Add this line
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.expensetracker.viewmodel.ExpenseViewModel
 
-// ─────────────────────────────────────────────────────────────────────────────
-// STEP 1 — MainActivity
-//
-// ComponentActivity is the base class for Compose apps.
-// setContent {} replaces the old setContentView(R.layout.activity_main).
-// Everything inside is Compose — no XML layouts anywhere.
-// ─────────────────────────────────────────────────────────────────────────────
 
 class MainActivity : ComponentActivity() {
 
@@ -23,31 +20,24 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()  // draws content behind system bars (status bar, nav bar)
 
+        //Replace setContent
         setContent {
             ExpenseTrackerTheme {
-                // STEP 2 — Temporary manual screen switch
-                // We use a simple Boolean flag to swap between screens.
-                // This is a placeholder — Week 5 replaces this with NavController.
-                //
-                // INSTRUCTOR NOTE ─────────────────────────────────────────────
-                // Show students the problem with this approach:
-                //   1. Back button doesn't work (pressing Back exits the app)
-                //   2. Can't deep-link to a screen
-                //   3. Doesn't scale past 2 screens
-                // Then: "Week 5 fixes all three with one composable: NavHost."
-                // ─────────────────────────────────────────────────────────────
-
                 var showAddScreen by remember { mutableStateOf(false) }
-
+                var expenses by remember { mutableStateOf(sampleExpenses) }
+                val expenseViewModel: ExpenseViewModel = viewModel()
                 if (showAddScreen) {
                     AddExpenseScreen(
+                        viewModel   = expenseViewModel,
                         onBackClick = { showAddScreen = false }
                     )
                 } else {
                     ExpenseListScreen(
+                        viewModel  = expenseViewModel,
                         onAddClick = { showAddScreen = true }
                     )
                 }
+
             }
         }
     }

@@ -8,8 +8,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,6 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.expensetracker.model.Expense
 import com.example.expensetracker.model.sampleExpenses
 import com.example.expensetracker.ui.theme.ColorEntertainment
@@ -24,19 +29,17 @@ import com.example.expensetracker.ui.theme.ColorFood
 import com.example.expensetracker.ui.theme.ColorOther
 import com.example.expensetracker.ui.theme.ColorTransport
 import com.example.expensetracker.ui.theme.ExpenseTrackerTheme
-
-// ─────────────────────────────────────────────────────────────────────────────
-// STEP 6 — Expense List Screen
-// This is the main screen. It uses Scaffold (the standard Material 3 page
-// container) which gives us a TopAppBar slot and a FAB slot for free.
-// ─────────────────────────────────────────────────────────────────────────────
+import com.example.expensetracker.viewmodel.ExpenseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpenseListScreen(
-    expenses: List<Expense> = sampleExpenses,  // Week 4: replaced by ViewModel state
-    onAddClick: () -> Unit = {}                // Week 5: navigates to AddExpenseScreen
+    viewModel: ExpenseViewModel = viewModel(),
+    onAddClick: () -> Unit = {}
 ) {
+    val expenses by viewModel.expenses.collectAsStateWithLifecycle()
+    val total = expenses.sumOf { it.amount }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -54,73 +57,56 @@ fun ExpenseListScreen(
             )
         },
         floatingActionButton = {
-            // INSTRUCTOR NOTE ─────────────────────────────────────────────────
-            // The FAB does nothing yet — onAddClick is an empty lambda.
-            // In Week 5 we pass navController.navigate("add_expense") here.
-            // Ask students: "Why pass the action as a parameter instead of
-            // hardcoding it?" → separation of concerns; easier to test.
-            // ─────────────────────────────────────────────────────────────────
             FloatingActionButton(
-                onClick           = onAddClick,
-                containerColor    = MaterialTheme.colorScheme.primary,
-                contentColor      = Color.White
+                onClick        = onAddClick,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor   = Color.White
             ) {
                 Icon(
-                    imageVector         = Icons.Filled.Add,
-                    contentDescription  = "Add expense"
+                    imageVector        = Icons.Filled.AddCircleOutline,
+                    contentDescription = "Add expense"
                 )
             }
         }
     ) { innerPadding ->
-
-        // STEP 7 — Summary bar
-        // Shows the running total across all expenses.
-        // In Week 4 this value comes from ViewModel; for now we calculate inline.
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            SummaryBar(total = expenses.sumOf { it.amount })
+            SummaryBar(count = expenses.size, total = total)
 
-            // STEP 8 — LazyColumn
-            // LazyColumn only composes the items currently visible on screen.
-            // For a short list this doesn't matter — but it's the right habit.
-            // Compare to RecyclerView: LazyColumn is the Compose equivalent,
-            // without the ViewHolder boilerplate.
             LazyColumn(
-                contentPadding    = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                contentPadding      = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(
-                    items = expenses,
-                    key   = { it.id }   // stable key helps Compose animate list changes
-                ) { expense ->
-                    ExpenseItem(expense = expense)
+                items(expenses, key = { it.id }) { expense ->
+                    ExpenseItem(
+                        expense  = expense,
+                        onDelete = { viewModel.deleteExpense(expense.id) }
+                    )
                 }
             }
         }
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// STEP 7 — Summary Bar composable
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Summary bar — v1 style, v2 expense count added ───────────────────────
 @Composable
-fun SummaryBar(total: Double) {
+fun SummaryBar(count: Int, total: Double) {
     Surface(
-        color     = MaterialTheme.colorScheme.primaryContainer,
+        color          = MaterialTheme.colorScheme.primaryContainer,
         tonalElevation = 2.dp
     ) {
         Row(
-            modifier = Modifier
+            modifier              = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment     = Alignment.CenterVertically
         ) {
             Text(
-                text  = "Total spent",
+                text  = "$count expense${if (count == 1) "" else "s"}",
                 style = MaterialTheme.typography.labelLarge,
                 color = Color.White.copy(alpha = 0.85f)
             )
@@ -134,35 +120,29 @@ fun SummaryBar(total: Double) {
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// STEP 8 — Expense item card
-// One Card per expense. Card gives us elevation + rounded corners.
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Expense card — v1 style + delete button + notes ──────────────────────
 @Composable
-fun ExpenseItem(expense: Expense) {
+fun ExpenseItem(
+    expense:  Expense,
+    onDelete: () -> Unit = {}
+) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape    = RoundedCornerShape(12.dp),
+        modifier  = Modifier.fillMaxWidth(),
+        shape     = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
-            modifier = Modifier
+            modifier              = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalAlignment     = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Left side: category dot + text
+            // Left: category dot + text
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
+                modifier          = Modifier.weight(1f)
             ) {
-                // INSTRUCTOR NOTE ─────────────────────────────────────────────
-                // The colored dot is a Box with a CircleShape clip.
-                // Ask students: "How would you replace this with a real icon?"
-                // Hint: use an Icon composable inside the Box, or swap in
-                // Icons.Filled.Restaurant for food, etc.
-                // ─────────────────────────────────────────────────────────────
                 Box(
                     modifier = Modifier
                         .size(12.dp)
@@ -181,22 +161,36 @@ fun ExpenseItem(expense: Expense) {
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
+                    if (expense.notes.isNotBlank()) {
+                        Text(
+                            text  = expense.notes,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                    }
                 }
             }
 
-            // Right side: amount
-            Text(
-                text       = "-$${"%.2f".format(expense.amount)}",
-                style      = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                color      = MaterialTheme.colorScheme.error
-            )
+            // Right: amount + delete
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text       = "-$${"%.2f".format(expense.amount)}",
+                    style      = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    color      = if (expense.amount < 10.0) Color(0xFF2E7D32) else MaterialTheme.colorScheme.error
+                )
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        imageVector        = Icons.Filled.Delete,
+                        contentDescription = "Delete",
+                        tint               = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
         }
     }
 }
 
-// Helper: maps category string → accent color
-// In Week 6 this comes from the JSON category config instead.
 fun categoryColor(category: String): Color = when (category) {
     "Food"          -> ColorFood
     "Transport"     -> ColorTransport
@@ -204,9 +198,7 @@ fun categoryColor(category: String): Color = when (category) {
     else            -> ColorOther
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Previews — run these in Android Studio with the Split view open
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Previews ──────────────────────────────────────────────────────────────
 @Preview(showBackground = true, name = "Expense List")
 @Composable
 fun ExpenseListScreenPreview() {

@@ -2,11 +2,6 @@ package com.example.expensetracker.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// STEP 5 — Theme colors
-// Material 3 uses a color scheme token system (primary, secondary, surface, etc.).
-// These are our seed colors. In Week 10 we'll generate a full scheme from
-// material.io/theme-builder and replace this file with the generated output.
-
 val PrimaryBlue        = Color(0xFF1565C0)
 val PrimaryBlueDark    = Color(0xFF0D47A1)
 val SecondaryTeal      = Color(0xFF00897B)
