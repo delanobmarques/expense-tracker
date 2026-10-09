@@ -5,14 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.expensetracker.ui.screens.AddExpenseScreen
 import com.example.expensetracker.ui.screens.ExpenseListScreen
 import com.example.expensetracker.ui.theme.ExpenseTrackerTheme
-import com.example.expensetracker.model.Expense // Add this line
-import com.example.expensetracker.model.sampleExpenses // Add this line
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.expensetracker.viewmodel.ExpenseViewModel
-
 
 class MainActivity : ComponentActivity() {
 
@@ -20,11 +17,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()  // draws content behind system bars (status bar, nav bar)
 
-        //Replace setContent
         setContent {
             ExpenseTrackerTheme {
                 var showAddScreen by remember { mutableStateOf(false) }
-                var expenses by remember { mutableStateOf(sampleExpenses) }
                 val expenseViewModel: ExpenseViewModel = viewModel()
                 if (showAddScreen) {
                     AddExpenseScreen(

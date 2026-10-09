@@ -14,7 +14,9 @@ import androidx.compose.ui.unit.dp
 import com.example.expensetracker.ui.theme.ExpenseTrackerTheme
 import com.example.expensetracker.viewmodel.ExpenseViewModel
 
-val expenseCategories = listOf("Food", "Transport", "Entertainment", "Other")
+val expenseCategories = listOf(
+    "Food", "Transport", "Entertainment", "Utilities", "Healthcare", "Shopping", "Other"
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -139,13 +141,13 @@ fun AddExpenseScreen(
                     && date.isNotBlank()
 
             Button(
-                //Add notes to onClick
                 onClick = {
                     viewModel.addExpense(
                         description = description,
                         amount      = amount.toDouble(),
                         category    = selectedCategory,
-                        date        = date
+                        date        = date,
+                        notes       = notes
                     )
                     onBackClick()   // go back to the list
                 },

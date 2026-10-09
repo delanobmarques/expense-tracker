@@ -6,18 +6,18 @@ data class Expense(
     val amount: Double,
     val category: String,
     val date: String,
-    val notes: String = "",
+    val notes: String = "" //** in-class exercise
 )
 
-val sampleExpenses = listOf(
-    Expense(1, "Groceries",        67.45,  "Food",          "2026-09-19"),
-    Expense(2, "Bus pass",         98.00,  "Transport",     "2026-09-18"),
-    Expense(3, "Netflix",          17.99,  "Entertainment", "2026-09-15"),
-    Expense(4, "Coffee & snacks",  12.50,  "Food",          "2026-09-14"),
-    Expense(5, "Parking meter",     4.00,  "Transport",     "2026-09-12"),
-    Expense(6, "Notebook",          8.99,  "Other",         "2026-09-10"),
-    Expense(7, "Gym membership",   45.00,  "Health",        "2026-09-08", "Monthly subscription"),
-    Expense(8, "Electricity bill", 85.20,  "Utilities",     "2026-09-05", "Split with roommate"),
-    Expense(9, "Dinner with team", 34.50,  "Food",          "2026-09-03", "Reimbursable work expense"),
-    Expense(10, "Bookstore",       22.99,  "Shopping",      "2026-09-01", "Kotlin programming book")
+val sampleExpenses = listOf(//** in-class exercise
+    Expense(1, "Groceries", 155.0, "Food", "2026-06-01", "Superstore weekly run"),
+    Expense(2, "Bus pass", 50.0, "Transport", "2026-06-11", "Monthly pass"),
+    Expense(3, "Netflix", 20.0, "Entertainment", "2026-06-05"),
+    Expense(4, "Laptop", 250.0, "Other", "2026-06-12", "Repairs"),
+    Expense(5, "Groceries", 250.0, "Food", "2026-06-20"),
+    Expense(6, "Groceries", 100.0, "Food", "2026-06-26"),
+    Expense(7, "Electricity Bill", 105.5, "Utilities", "2026-06-15", "May power bill"),
+    Expense(8, "Pharmacy", 5.0, "Healthcare", "2026-06-18"),
+    Expense(9, "New Shoes", 75.0, "Shopping", "2026-06-22", "Sale item"),
+    Expense(10, "Bus Ticket", 2.5, "Transport", "2026-06-11"),
 )
