@@ -24,17 +24,42 @@ class ExpenseViewModel : ViewModel() {
         notes: String = ""
     ) {
         val newExpense = Expense(
-            id          = (_expenses.value.maxOfOrNull { it.id } ?: 0) + 1,
+            id = (_expenses.value.maxOfOrNull { it.id } ?: 0) + 1,
             description = description,
-            amount      = amount,
-            category    = category,
-            date        = date,
-            notes       = notes
+            amount = amount,
+            category = category,
+            date = date,
+            notes = notes
         )
         _expenses.update { current -> current + newExpense }
     }
 
     fun deleteExpense(id: Int) {
         _expenses.update { current -> current.filter { it.id != id } }
+    }
+
+    //***Part2-update: updating an existing expense
+    fun updateExpense(
+        id: Int,
+        description: String,
+        amount: Double,
+        category: String,
+        date: String,
+        notes: String = ""
+    ) {
+        _expenses.update { currentList ->
+            currentList.map {
+                if (it.id == id)
+                    it.copy(
+                        description = description,
+                        amount = amount,
+                        category = category,
+                        date = date,
+                        notes = notes
+                    )
+                 else
+                    it
+            }
+        }
     }
 }

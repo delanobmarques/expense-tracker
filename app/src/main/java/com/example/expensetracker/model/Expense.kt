@@ -6,10 +6,10 @@ data class Expense(
     val amount: Double,
     val category: String,
     val date: String,
-    val notes: String = "" //** in-class exercise
+    val notes: String = ""
 )
 
-val sampleExpenses = listOf(//** in-class exercise
+val sampleExpenses = listOf(
     Expense(1, "Groceries", 155.0, "Food", "2026-06-01", "Superstore weekly run"),
     Expense(2, "Bus pass", 50.0, "Transport", "2026-06-11", "Monthly pass"),
     Expense(3, "Netflix", 20.0, "Entertainment", "2026-06-05"),

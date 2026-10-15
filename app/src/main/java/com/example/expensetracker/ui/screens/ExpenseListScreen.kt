@@ -1,6 +1,7 @@
 package com.example.expensetracker.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,7 +36,8 @@ import com.example.expensetracker.viewmodel.ExpenseViewModel
 @Composable
 fun ExpenseListScreen(
     viewModel: ExpenseViewModel = viewModel(),
-    onAddClick: () -> Unit = {}
+    onAddClick: () -> Unit = {},
+    onItemClick: (Expense) -> Unit = {}   // *** v5 update
 ) {
     val expenses by viewModel.expenses.collectAsStateWithLifecycle()
     val total = expenses.sumOf { it.amount }
@@ -84,7 +86,8 @@ fun ExpenseListScreen(
                 items(expenses, key = { it.id }) { expense ->
                     ExpenseItem(
                         expense  = expense,
-                        onDelete = { viewModel.deleteExpense(expense.id) }
+                        onDelete = { viewModel.deleteExpense(expense.id) },
+                        onItemClick = { onItemClick(expense) }   // ***v5 update ← wire tap → detail
                     )
                 }
             }
@@ -92,7 +95,7 @@ fun ExpenseListScreen(
     }
 }
 
-// ── Summary bar — v1 style, v2 expense count added ───────────────────────
+//Summary bar
 @Composable
 fun SummaryBar(count: Int, total: Double) {
     Surface(
@@ -121,14 +124,15 @@ fun SummaryBar(count: Int, total: Double) {
     }
 }
 
-// ── Expense card — v1 style + delete button + notes ──────────────────────
+// Expense card
 @Composable
 fun ExpenseItem(
     expense:  Expense,
-    onDelete: () -> Unit = {}
+    onDelete: () -> Unit = {},
+    onItemClick: () -> Unit = {}   // *** v5 update ← whole card is tappable
 ) {
     Card(
-        modifier  = Modifier.fillMaxWidth(),
+        modifier  = Modifier.fillMaxWidth().clickable { onItemClick() },// *** v5 update ← whole card is tappable
         shape     = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
