@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -37,7 +38,8 @@ import com.example.expensetracker.viewmodel.ExpenseViewModel
 fun ExpenseListScreen(
     viewModel: ExpenseViewModel = viewModel(),
     onAddClick: () -> Unit = {},
-    onItemClick: (Expense) -> Unit = {}   // *** v5 update
+    onItemClick: (Expense) -> Unit = {},
+    onRatesClick: () -> Unit = {} //*** update ← wire tap → rates
 ) {
     val expenses by viewModel.expenses.collectAsStateWithLifecycle()
     val total = expenses.sumOf { it.amount }
@@ -51,6 +53,16 @@ fun ExpenseListScreen(
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
+                },
+                //***update: add rates icon
+                actions = {
+                    IconButton(onClick = onRatesClick) {
+                        Icon(
+                            Icons.Default.CurrencyExchange,
+                            contentDescription = "Currency rates",
+                            tint = Color.White
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor    = MaterialTheme.colorScheme.primary,
@@ -87,7 +99,7 @@ fun ExpenseListScreen(
                     ExpenseItem(
                         expense  = expense,
                         onDelete = { viewModel.deleteExpense(expense.id) },
-                        onItemClick = { onItemClick(expense) }   // ***v5 update ← wire tap → detail
+                        onItemClick = { onItemClick(expense) }
                     )
                 }
             }

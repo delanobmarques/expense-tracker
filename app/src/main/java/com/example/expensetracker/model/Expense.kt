@@ -1,5 +1,5 @@
 package com.example.expensetracker.model
-
+//data structures, plain Kotlin classes with no Android dependencies
 data class Expense(
     val id: Int,
     val description: String,
