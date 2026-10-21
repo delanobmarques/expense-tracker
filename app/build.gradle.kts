@@ -46,8 +46,13 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-    //include navigation compose dependency
-    implementation("androidx.navigation:navigation-compose:2.7.7") //*** v3 update
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    // Retrofit — the HTTP client
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    // Gson converter — maps JSON ↔ data classes
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    // Coroutines support for Android
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
