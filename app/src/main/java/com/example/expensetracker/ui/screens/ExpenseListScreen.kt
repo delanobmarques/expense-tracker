@@ -141,10 +141,10 @@ fun SummaryBar(count: Int, total: Double) {
 fun ExpenseItem(
     expense:  Expense,
     onDelete: () -> Unit = {},
-    onItemClick: () -> Unit = {}   // *** v5 update ← whole card is tappable
+    onItemClick: () -> Unit = {}
 ) {
     Card(
-        modifier  = Modifier.fillMaxWidth().clickable { onItemClick() },// *** v5 update ← whole card is tappable
+        modifier  = Modifier.fillMaxWidth().clickable { onItemClick() },
         shape     = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
